@@ -413,27 +413,53 @@
             // Small-screen swap: buttons stack instead of absolute movement
 
 
-            function swapSmall() {
-                // clear absolute positioning so the buttons can flow normally
-                noBtn.style.left = '';
-                noBtn.style.top = '';
-                noBtn.style.width = '';
-                noBtn.style.height = '';
+            // Shift No to discrete positions on small screens for a playful 'shifter' effect
+            let _noPosIndex = -1;
+            const _noPositions = [
+                { x: 12, y: 18 },
+                { x: 78, y: 18 },
+                { x: 12, y: 48 },
+                { x: 78, y: 48 },
+                { x: 50, y: 78 },
+                { x: 28, y: 78 }
+            ];
 
-                btnArea.classList.add('stack');
-                btnArea.classList.toggle('swapped');
-                // brief visual wobble for feedback
+            function shiftNoSmall() {
+                const areaRect = btnArea.getBoundingClientRect();
+                const btnW = noBtn.offsetWidth;
+                const btnH = noBtn.offsetHeight;
+
+                // choose next index (different from current)
+                let next = Math.floor(Math.random() * _noPositions.length);
+                if (_noPosIndex >= 0) {
+                    let attempts = 0;
+                    while (next === _noPosIndex && attempts < 8) { next = (next + 1) % _noPositions.length; attempts++; }
+                }
+                _noPosIndex = next;
+                const pos = _noPositions[_noPosIndex];
+
+                // compute pixel positions inside btnArea
+                const left = Math.max(8, Math.min(areaRect.width - btnW - 8, Math.round(areaRect.width * (pos.x/100) - (btnW/2))));
+                const top = Math.max(4, Math.min(areaRect.height - btnH - 4, Math.round(areaRect.height * (pos.y/100) - (btnH/2))));
+
+                // lock size and absolute position
+                noBtn.style.width = btnW + 'px';
+                noBtn.style.height = btnH + 'px';
                 noBtn.classList.add('moving');
+                noBtn.style.left = left + 'px';
+                noBtn.style.top = top + 'px';
+
+                // small pop and heart
                 spawnFloatingHeart();
-                setTimeout(() => noBtn.classList.remove('moving'), 420);
+                setTimeout(() => noBtn.classList.remove('moving'), 380);
             }
 
             // Move No to random place inside btnArea on wider screens, swap on small screens
             function moveNoButton() {
                 const smallScreen = window.innerWidth <= 520 || btnArea.clientWidth < 340;
                 if (smallScreen) {
-                    swapSmall();
-                    spawnFloatingHeart();
+                    // shift to a discrete position for a playful mobile effect
+                    shiftNoSmall();
                     return;
                 }
 
@@ -477,7 +503,7 @@
                 e.stopPropagation();
                 const smallScreen = window.innerWidth <= 520 || btnArea.clientWidth < 340;
                 if (smallScreen) {
-                    swapSmall();
+                    shiftNoSmall();
                 } else {
                     moveNoButton();
                 }
@@ -577,6 +603,8 @@
                 noBtn.style.height = '';
                 noBtn.classList.remove('moving');
                 btnArea.classList.remove('stack', 'swapped');
+                // reset stored position index so next tap chooses a fresh spot
+                _noPosIndex = -1;
             });
 
             // Stop heart timer when leaving page
