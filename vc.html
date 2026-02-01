@@ -424,7 +424,7 @@
                 btnArea.classList.toggle('swapped');
                 // brief visual wobble for feedback
                 noBtn.classList.add('moving');
-                showNoFeedback();
+                spawnFloatingHeart();
                 setTimeout(() => noBtn.classList.remove('moving'), 420);
             }
 
@@ -478,7 +478,6 @@
                 const smallScreen = window.innerWidth <= 520 || btnArea.clientWidth < 340;
                 if (smallScreen) {
                     swapSmall();
-                    showNoFeedback();
                 } else {
                     moveNoButton();
                 }
