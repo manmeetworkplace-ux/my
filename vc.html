@@ -345,28 +345,7 @@
                 transform: translateX(0);
             }
 
-            /* immediate tap feedback for mobile */
-            .btn.no.tapped {
-                transform: scale(0.96) rotate(-4deg);
-                box-shadow: 0 4px 14px rgba(0,0,0,0.08) inset, 0 8px 20px rgba(0,0,0,0.08);
-            }
 
-            .no-tooltip {
-                position: absolute;
-                pointer-events: none;
-                background: rgba(0,0,0,0.8);
-                color: #fff;
-                font-weight: 700;
-                font-size: 12px;
-                padding: 6px 9px;
-                border-radius: 10px;
-                transform: translate(-50%, -6px) scale(.98);
-                opacity: 0;
-                transition: opacity 180ms ease, transform 180ms ease;
-                white-space: nowrap;
-                z-index: 40;
-            }
-            .no-tooltip.show { opacity: 1; transform: translate(-50%, -12px) scale(1); }
 
         }
 
@@ -432,28 +411,7 @@
             noBtn.tabIndex = -1;
 
             // Small-screen swap: buttons stack instead of absolute movement
-            // show a quick tooltip and tapped class to indicate No can't be touched
-            function showNoFeedback() {
-                try {
-                    noBtn.classList.add('tapped');
-                    const tip = document.createElement('div');
-                    tip.className = 'no-tooltip';
-                    tip.textContent = "Can't tap me!";
-                    btnArea.appendChild(tip);
 
-                    // position relative to the No button
-                    const nbRect = noBtn.getBoundingClientRect();
-                    const areaRect = btnArea.getBoundingClientRect();
-                    const left = nbRect.left - areaRect.left + (nbRect.width / 2);
-                    const top = nbRect.top - areaRect.top - 8;
-                    tip.style.left = left + 'px';
-                    tip.style.top = top + 'px';
-
-                    // show and remove
-                    requestAnimationFrame(() => tip.classList.add('show'));
-                    setTimeout(() => { tip.classList.remove('show'); tip.remove(); noBtn.classList.remove('tapped'); }, 900);
-                } catch (err) { /* defensive */ }
-            }
 
             function swapSmall() {
                 // clear absolute positioning so the buttons can flow normally
