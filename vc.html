@@ -5,6 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hey!</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="icon"
+        href="data:image/svg+xml, <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>❤️</text></svg>">
     <style>
         /* Background and page look */
         body {
@@ -293,30 +296,78 @@
 
         /* Small screens: stack buttons and scale down sizes */
         @media (max-width: 520px) {
-            .container { margin: 1rem; padding: 1.25rem; min-width: 260px; }
-            h1.message { font-size: 1.25rem }
-            p.lead { font-size: 0.95rem }
-            .btns { gap: 0.75rem; height: auto }
-            .btn { min-width: 120px; padding: 0.8rem 1.05rem; min-height: 48px; }
-            .btn.yes:hover { transform: translateY(-2px) scale(1.02); }
+            .container {
+                margin: 1rem;
+                padding: 1.25rem;
+                min-width: 260px;
+            }
+
+            h1.message {
+                font-size: 1.25rem
+            }
+
+            p.lead {
+                font-size: 0.95rem
+            }
+
+            .btns {
+                gap: 0.75rem;
+                height: auto
+            }
+
+            .btn {
+                min-width: 120px;
+                padding: 0.8rem 1.05rem;
+                min-height: 48px;
+            }
+
+            .btn.yes:hover {
+                transform: translateY(-2px) scale(1.02);
+            }
 
             /* When narrow, prefer stacking buttons vertically to avoid overlap */
             .btns.stack {
                 flex-direction: column;
                 align-items: center;
             }
-            .btns.stack .btn { width: 70%; }
-            .btns.swapped { flex-direction: column; align-items: center; }
-            .btns.swapped .btn.no { order: -1; transform: translateX(0); }
+
+            .btns.stack .btn {
+                width: 70%;
+            }
+
+            .btns.swapped {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btns.swapped .btn.no {
+                order: -1;
+                transform: translateX(0);
+            }
         }
 
         /* Extra-small mobile handling: adjust overlay and GIF */
         @media (max-width: 360px) {
-            .container { padding: 1rem }
-            .overlay .panel { width: calc(100% - 40px); padding: 0.9rem }
-            .overlay .panel .gif { max-width: 240px }
-            .overlay .panel .panel-title { font-size: 1.1rem }
-            .overlay .result { font-size: 1rem }
+            .container {
+                padding: 1rem
+            }
+
+            .overlay .panel {
+                width: calc(100% - 40px);
+                padding: 0.9rem
+            }
+
+            .overlay .panel .gif {
+                max-width: 240px
+            }
+
+            .overlay .panel .panel-title {
+                font-size: 1.1rem
+            }
+
+            .overlay .result {
+                font-size: 1rem
+            }
         }
     </style>
 </head>
@@ -514,7 +565,7 @@
                 noBtn.style.width = '';
                 noBtn.style.height = '';
                 noBtn.classList.remove('moving');
-                btnArea.classList.remove('stack','swapped');
+                btnArea.classList.remove('stack', 'swapped');
             });
 
             // Stop heart timer when leaving page
