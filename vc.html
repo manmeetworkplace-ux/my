@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hey!</title>
+    <style>
+        /* Background and page look */
+        body {
+            background: linear-gradient(180deg, #e5bad0 0%, #e0c0d6 40%, #d6a9cb 100%);
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        /* Subtle container with soft glow and pop animation */
+        .container {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(255, 245, 250, 0.95));
+            padding: 2rem;
+            border-radius: 14px;
+            box-shadow: 0 20px 50px rgba(180, 59, 108, 0.12);
+            text-align: center;
+            min-width: 320px;
+            max-width: 520px;
+            transform: translateY(0);
+            animation: popIn 500ms cubic-bezier(.2, .9, .3, 1);
+            position: relative;
+        }
+
+        @keyframes popIn {
+            from {
+                transform: translateY(8px) scale(0.98);
+                opacity: 0
+            }
+
+            to {
+                transform: translateY(0) scale(1);
+                opacity: 1
+            }
+        }
+
+        .card {
+            position: relative;
+            padding: 0.5rem;
+        }
+
+        h1.message {
+            margin: 0 0 0.5rem 0;
+            font-size: 1.75rem;
+            color: #b43b6c;
+            letter-spacing: 0.6px;
+            font-weight: 800;
+        }
+
+        h1.message::after {
+            content: ' ❤️';
+            display: inline-block;
+            transform-origin: center;
+            animation: beat 900ms infinite ease-in-out;
+        }
+
+        @keyframes beat {
+
+            0%,
+            100% {
+                transform: scale(1)
+            }
+
+            50% {
+                transform: scale(1.15)
+            }
+        }
+
+        p.lead {
+            margin: 0 0 1rem 0;
+            color: #6b3b4a;
+            opacity: 0.95;
+        }
+
+        .btns {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            height: 64px;
+            position: relative;
+        }
+
+        .btn {
+            padding: 0.72rem 1.2rem;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 700;
+            color: #fff;
+            transition: transform 180ms ease, box-shadow 200ms ease, filter 200ms ease;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+            user-select: none;
+            position: relative;
+            min-width: 72px;
+            min-height: 44px;
+            /* ensure stable height when switching to absolute */
+        }
+
+        .btn.yes {
+            background: linear-gradient(180deg, #ff7bac, #ff4d94);
+            text-shadow: 0 1px 0 rgba(255, 255, 255, 0.15);
+        }
+
+        .btn.yes:hover {
+            transform: translateY(-3px) scale(1.03);
+            box-shadow: 0 10px 28px rgba(255, 77, 148, 0.18);
+        }
+
+        /* No looks playful but disabled */
+        .btn.no {
+            background: linear-gradient(180deg, #98a6ff, #7f93ff);
+            cursor: not-allowed;
+            filter: saturate(0.98) brightness(0.98);
+        }
+
+        /* slight wobble when the No moves */
+        @keyframes wobble {
+            0% {
+                transform: translateX(0)
+            }
+
+            25% {
+                transform: translateX(-6px)
+            }
+
+            50% {
+                transform: translateX(6px)
+            }
+
+            75% {
+                transform: translateX(-3px)
+            }
+
+            100% {
+                transform: translateX(0)
+            }
+        }
+
+        .btn.no.moving {
+            position: absolute;
+            transition: left 220ms ease, top 220ms ease;
+            animation: wobble 340ms ease;
+        }
+
+        /* When stacked on small screens, don't switch to absolute positioning */
+        .btns.stack .btn.no.moving {
+            position: static;
+            animation: wobble 340ms ease;
+        }
+
+        /* Floating hearts generated dynamically */
+        .floating-heart {
+            position: fixed;
+            left: 50%;
+            top: 90%;
+            width: 18px;
+            height: 18px;
+            pointer-events: none;
+            z-index: 10;
+            opacity: 0;
+            transform: translate(-50%, 0) scale(0.8);
+            animation: floatUp 2200ms linear forwards;
+            will-change: transform, opacity;
+        }
+
+        .floating-heart svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        @keyframes floatUp {
+            to {
+                transform: translate(-50%, -380px) scale(1.1);
+                opacity: 0;
+            }
+        }
+
+        /* Confetti */
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 14px;
+            z-index: 60;
+            pointer-events: none;
+            opacity: 0.95;
+            transform-origin: center;
+            animation: confettiFall 1400ms linear forwards;
+        }
+
+        @keyframes confettiFall {
+            to {
+                transform: translateY(380px) rotate(480deg);
+                opacity: 0;
+            }
+        }
+
+        /* Overlay with subtle backdrop blur and centered, animated panel */
+        .overlay {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(20, 8, 12, 0.45);
+            backdrop-filter: blur(4px) saturate(1.05);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 250ms ease;
+            z-index: 50;
+        }
+
+        .overlay.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .overlay .panel {
+            background: linear-gradient(180deg, #fff, #fff7fb);
+            padding: 1.4rem 1.25rem;
+            border-radius: 14px;
+            text-align: center;
+            box-shadow: 0 26px 60px rgba(16, 6, 12, 0.34);
+            max-width: 860px;
+            width: calc(100% - 80px);
+            transform: translateY(6px) scale(.98);
+            transition: transform 220ms cubic-bezier(.2, .9, .3, 1), opacity 220ms ease;
+            max-height: calc(100vh - 80px);
+            overflow-y: auto;
+        }
+
+        .overlay.show .panel {
+            transform: translateY(0) scale(1);
+        }
+
+        .overlay .panel .panel-title {
+            font-size: 1.35rem;
+            margin: 0 0 0.5rem 0;
+            color: #b43b6c;
+            font-weight: 800;
+        }
+
+        .overlay .panel .gif {
+            max-width: 360px;
+            width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto 0.75rem;
+            border-radius: 10px;
+            box-shadow: 0 6px 18px rgba(180, 59, 108, 0.08);
+        }
+
+        .overlay .result {
+            font-size: 1.15rem;
+            color: #9b2f57;
+            font-weight: 700;
+            animation: popIn 420ms cubic-bezier(.2, .9, .3, 1);
+            margin: 0.25rem 0 0 0;
+        }
+
+        .close-btn {
+            position: absolute;
+            right: 12px;
+            top: 12px;
+            border: none;
+            background: transparent;
+            color: #7a3a53;
+            font-size: 22px;
+            line-height: 1;
+            cursor: pointer;
+            border-radius: 8px;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .close-btn:hover {
+            transform: scale(1.05);
+        }
+
+
+        /* Small screens: stack buttons and scale down sizes */
+        @media (max-width: 520px) {
+            .container { margin: 1rem; padding: 1.25rem; min-width: 260px; }
+            h1.message { font-size: 1.25rem }
+            p.lead { font-size: 0.95rem }
+            .btns { gap: 0.75rem; height: auto }
+            .btn { min-width: 120px; padding: 0.8rem 1.05rem; min-height: 48px; }
+            .btn.yes:hover { transform: translateY(-2px) scale(1.02); }
+
+            /* When narrow, prefer stacking buttons vertically to avoid overlap */
+            .btns.stack {
+                flex-direction: column;
+                align-items: center;
+            }
+            .btns.stack .btn { width: 70%; }
+            .btns.swapped { flex-direction: column; align-items: center; }
+            .btns.swapped .btn.no { order: -1; transform: translateX(0); }
+        }
+
+        /* Extra-small mobile handling: adjust overlay and GIF */
+        @media (max-width: 360px) {
+            .container { padding: 1rem }
+            .overlay .panel { width: calc(100% - 40px); padding: 0.9rem }
+            .overlay .panel .gif { max-width: 240px }
+            .overlay .panel .panel-title { font-size: 1.1rem }
+            .overlay .result { font-size: 1rem }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="card">
+            <h1 class="message">Ami Sharma</h1>
+            <p class="lead">I know we’re already together, but I still want to ask properly—will you be my Valentine?
+            </p>
+
+            <div class="btns" id="btn-area">
+                <button class="btn yes" id="yes-btn">Yes</button>
+                <button class="btn no" id="no-btn">No</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="overlay" id="overlay" aria-hidden="true" role="dialog" aria-modal="true">
+        <div class="panel" role="document">
+            <button type="button" class="close-btn" id="close-overlay" aria-label="Close overlay">×</button>
+            <h3 class="panel-title">Yes — I'm really happy! 🎉</h3>
+            <img id="excite-gif" class="gif" src="https://media.giphy.com/media/3ohzdIuqJoo8QdKlnW/giphy.gif"
+                alt="Hearts animation">
+            <div class="result">That just made my day. 😍 Thank you for being my Valentine ❤️</div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const btnArea = document.getElementById('btn-area');
+            const noBtn = document.getElementById('no-btn');
+            const yesBtn = document.getElementById('yes-btn');
+            const overlay = document.getElementById('overlay');
+
+            // Setup No button accessibility and blocking
+            noBtn.setAttribute('aria-disabled', 'true');
+            noBtn.tabIndex = -1;
+
+            // Small-screen swap: buttons stack instead of absolute movement
+            function swapSmall() {
+                // clear absolute positioning so the buttons can flow normally
+                noBtn.style.left = '';
+                noBtn.style.top = '';
+                noBtn.style.width = '';
+                noBtn.style.height = '';
+
+                btnArea.classList.add('stack');
+                btnArea.classList.toggle('swapped');
+                // brief visual wobble for feedback
+                noBtn.classList.add('moving');
+                setTimeout(() => noBtn.classList.remove('moving'), 420);
+            }
+
+            // Move No to random place inside btnArea on wider screens, swap on small screens
+            function moveNoButton() {
+                const smallScreen = window.innerWidth <= 520 || btnArea.clientWidth < 340;
+                if (smallScreen) {
+                    swapSmall();
+                    spawnFloatingHeart();
+                    return;
+                }
+
+                const areaRect = btnArea.getBoundingClientRect();
+                const btnW = noBtn.offsetWidth;
+                const btnH = noBtn.offsetHeight;
+
+                // Lock current size so the button doesn't shrink when switching to absolute positioning
+                noBtn.style.width = btnW + 'px';
+                noBtn.style.height = btnH + 'px';
+
+                noBtn.classList.add('moving');
+
+                const padding = 8;
+                const maxLeft = Math.max(areaRect.width - btnW - padding, 0);
+                const maxTop = Math.max(areaRect.height - btnH - padding, 0);
+
+                const yesRect = yesBtn.getBoundingClientRect();
+                const areaLeft = areaRect.left;
+                const areaTop = areaRect.top;
+
+                let attempts = 0;
+                let left = 0, top = 0;
+                do {
+                    left = Math.floor(Math.random() * (maxLeft + 1));
+                    top = Math.floor(Math.random() * (maxTop + 1));
+
+                    const candidate = { left: areaLeft + left, top: areaTop + top, right: areaLeft + left + btnW, bottom: areaTop + top + btnH };
+                    const overlap = !(candidate.right < yesRect.left || candidate.left > yesRect.right || candidate.bottom < yesRect.top || candidate.top > yesRect.bottom);
+                    attempts++;
+                    if (!overlap) break;
+                } while (attempts < 60);
+
+                noBtn.style.left = left + 'px';
+                noBtn.style.top = top + 'px';
+            }
+
+            // Block activations and move the button
+            function blockAndMove(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                moveNoButton();
+                spawnFloatingHeart();
+                return false;
+            }
+
+            noBtn.addEventListener('mouseenter', moveNoButton);
+            noBtn.addEventListener('focus', moveNoButton);
+            noBtn.addEventListener('pointerdown', blockAndMove);
+            noBtn.addEventListener('click', blockAndMove);
+            noBtn.addEventListener('touchstart', blockAndMove, { passive: false });
+            noBtn.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') blockAndMove(e); });
+
+            // Floating hearts generator
+            function spawnFloatingHeart() {
+                const heart = document.createElement('div');
+                heart.className = 'floating-heart';
+                heart.style.left = (50 + (Math.random() * 40 - 20)) + '%';
+                heart.style.top = (80 + Math.random() * 10) + '%';
+                heart.style.opacity = 1;
+                heart.innerHTML = '<svg viewBox="0 0 32 29" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M23.6 1c-2.2 0-4.2 1.1-5.6 2.8C16.6 2.1 14.6 1 12.4 1 8 1 4.8 4.2 4.8 8.6c0 10.5 12.6 13.8 14.8 19.8 0 0 14.8-11.8 14.8-19.8C34.4 4.2 31.2 1 26.8 1 25 1 23.6 1 23.6 1z" fill="#ff6b9a"/></svg>';
+                document.body.appendChild(heart);
+                setTimeout(() => heart.remove(), 2400);
+            }
+
+            // Periodically spawn decorative hearts
+            const heartTimer = setInterval(spawnFloatingHeart, 900);
+
+            // Confetti burst on Yes
+            function burstConfetti(x, y, count = 24) {
+                const colors = ['#ff6b9a', '#ffd166', '#ffd6f0', '#98a6ff', '#ff9aa2'];
+                for (let i = 0; i < count; i++) {
+                    const c = document.createElement('div');
+                    c.className = 'confetti';
+                    c.style.left = (x + (Math.random() * 80 - 40)) + 'px';
+                    c.style.top = (y + (Math.random() * 24 - 12)) + 'px';
+                    c.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    c.style.transform = 'translateY(0) rotate(' + (Math.random() * 360) + 'deg)';
+                    c.style.opacity = 1;
+                    c.style.width = (6 + Math.random() * 10) + 'px';
+                    c.style.height = (8 + Math.random() * 12) + 'px';
+                    document.body.appendChild(c);
+                    setTimeout(() => c.remove(), 1600);
+                }
+            }
+
+            yesBtn.addEventListener('click', function (e) {
+                overlay.classList.add('show');
+                overlay.setAttribute('aria-hidden', 'false');
+
+                // Move focus to close button for accessibility
+                const closeBtn = document.getElementById('close-overlay');
+                if (closeBtn) closeBtn.focus();
+
+                // Burst confetti around the Yes button
+                const rect = yesBtn.getBoundingClientRect();
+                const centerX = rect.left + rect.width / 2;
+                const centerY = rect.top + rect.height / 2;
+                burstConfetti(centerX, centerY, 28);
+
+                // one extra big heart
+                const big = document.createElement('div');
+                big.className = 'floating-heart';
+                big.style.left = (centerX / window.innerWidth * 100) + '%';
+                big.style.top = (centerY / window.innerHeight * 100) + '%';
+                big.style.transform = 'translate(-50%,0) scale(1.2)';
+                big.innerHTML = '<svg viewBox="0 0 32 29" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M23.6 1c-2.2 0-4.2 1.1-5.6 2.8C16.6 2.1 14.6 1 12.4 1 8 1 4.8 4.2 4.8 8.6c0 10.5 12.6 13.8 14.8 19.8 0 0 14.8-11.8 14.8-19.8C34.4 4.2 31.2 1 26.8 1 25 1 23.6 1 23.6 1z" fill="#ff6b9a"/></svg>';
+                document.body.appendChild(big);
+                setTimeout(() => big.remove(), 1800);
+            });
+
+            // Close overlay handlers and helper
+            function closeOverlay() {
+                overlay.classList.remove('show');
+                overlay.setAttribute('aria-hidden', 'true');
+                // return focus to Yes button for accessibility
+                if (yesBtn) yesBtn.focus();
+            }
+
+            overlay.addEventListener('click', function (e) { if (e.target === overlay) closeOverlay(); });
+
+            const closeBtnEl = document.getElementById('close-overlay');
+            if (closeBtnEl) {
+                closeBtnEl.addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); closeOverlay(); });
+                closeBtnEl.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') { e.preventDefault(); e.stopPropagation(); closeOverlay(); } });
+            }
+
+            // Close via Escape key
+            document.addEventListener('keydown', function (e) { if ((e.key === 'Escape' || e.key === 'Esc') && overlay.classList.contains('show')) { closeOverlay(); } });
+
+            // Clean up on resize
+            window.addEventListener('resize', function () {
+                noBtn.style.left = '';
+                noBtn.style.top = '';
+                noBtn.style.width = '';
+                noBtn.style.height = '';
+                noBtn.classList.remove('moving');
+                btnArea.classList.remove('stack','swapped');
+            });
+
+            // Stop heart timer when leaving page
+            window.addEventListener('beforeunload', () => clearInterval(heartTimer));
+        });
+    </script>
+</body>
+
+</html>
